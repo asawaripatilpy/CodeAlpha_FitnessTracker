@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fitness Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <div class="container">
+        <nav class="navbar">
+        <div class="logo">🏃 Fitness Tracker</div>
+
+        <div class="nav-links">
+            <a href="/">Dashboard</a>
+            <a href="/add">Add Activity</a>
+        </div>
+    </nav>
+
+        <h1>🏃 Fitness Tracker</h1>
+
+        <p class="subtitle">Track your daily fitness activities</p>
+
+        <div class="cards">
+
+    <div class="card">
+        <h3>👣 Steps</h3>
+        <p>{{ totals["total_steps"] or 0 }}</p>
+    </div>
+
+    <div class="card">
+        <h3>🔥 Calories</h3>
+        <p>{{ totals["total_calories"] or 0 }} kcal</p>
+    </div>
+
+    <div class="card">
+        <h3>🏋️ Workout</h3>
+        <p>{{ totals["total_workout"] or 0 }} min</p>
+    </div>
+
+    <div class="card">
+        <h3>🧠 Activity Level</h3>
+        <p>{{ latest_prediction }}</p>
+    </div>
+
+</div>
+
+        <a href="/add" class="button">➕ Add Activity</a>
+        <h2>📅 Weekly Progress</h2>
+
+<div class="weekly-cards">
+
+    <div class="weekly-card">
+        <h3>👣 Steps</h3>
+        <p>{{ weekly_progress["weekly_steps"] }}</p>
+    </div>
+
+    <div class="weekly-card">
+        <h3>🔥 Calories</h3>
+        <p>{{ weekly_progress["weekly_calories"] }} kcal</p>
+    </div>
+
+    <div class="weekly-card">
+        <h3>🏋️ Workout</h3>
+        <p>{{ weekly_progress["weekly_workout"] }} min</p>
+    </div>
+
+    <div class="weekly-card">
+        <h3>📊 Activities</h3>
+        <p>{{ weekly_progress["weekly_activities"] }}</p>
+    </div>
+
+</div>
+        <h2>📊 Steps Progress</h2>
+
+<div style="width: 90%; margin: auto;">
+    <canvas id="stepsChart"></canvas>
+</div>
+<h2>🔥 Calories Progress</h2>
+
+<div style="width: 90%; margin: auto;">
+    <canvas id="caloriesChart"></canvas>
+</div>
+
+        <h2>Recent Activities</h2>
+
+        <table>
+
+            <tr>
+                <th>Date</th>
+                <th>Exercise</th>
+                <th>Workout</th>
+                <th>Steps</th>
+                <th>Calories</th>
+                <th>Activity Status</th>
+                <th>Action</th>
+            </tr>
+
+            {% for activity in activities %}
+
+            <tr>
+                <td>{{ activity["date"] }}</td>
+                <td>{{ activity["exercise_type"] }}</td>
+                <td>{{ activity["workout_minutes"] }} min</td>
+                <td>{{ activity["steps"] }}</td>
+                <td>{{ activity["calories"] }} kcal</td>
+                <td>
+                <span class="activity-status {{ activity['activity_level']|lower }}">
+        {{ activity["activity_level"] }}
+    </span>
+
+    </td>
+    <td>
+    <form action="/delete/{{ activity['id'] }}" method="POST">
+        <button type="submit" class="delete-button">
+            🗑️ Delete
+        </button>
+    </form>
+</td>
+            </tr>
+
+            {% endfor %}
+
+        </table>
+
+    </div>
+    <div
+    id="chartData"
+    data-dates='{{ chart_dates | tojson }}'
+    data-steps='{{ chart_steps | tojson }}'
+    data-calories='{{ chart_calories | tojson }}'>
+    </div>
+    <script>
+    const chartData = document.getElementById("chartData");
+    const dates = JSON.parse(chartData.dataset.dates);
+    const steps = JSON.parse(chartData.dataset.steps);
+    const calories = JSON.parse(chartData.dataset.calories);
+
+    const ctx = document.getElementById('stepsChart');
+
+    new Chart(ctx, {
+        type: 'line',
+
+        data: {
+            labels: dates,
+            datasets: [{
+                label: 'Steps',
+                data: steps,
+                borderWidth: 3,
+                tension: 0.3
+            }]
+        },
+
+        options: {
+            responsive: true,
+
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+    const caloriesCtx = document.getElementById('caloriesChart');
+
+new Chart(caloriesCtx, {
+    type: 'line',
+
+    data: {
+        labels: dates,
+
+        datasets: [{
+            label: 'Calories',
+            data: calories,
+            borderWidth: 3,
+            tension: 0.3
+        }]
+    },
+
+    options: {
+        responsive: true,
+
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+</script>
+<footer>
+    <p>🏃 Fitness Tracker | Machine Learning Powered</p>
+    <p>Built with Python, Flask, SQLite & Scikit-learn</p>
+</footer>
+
+    
+
+</body>
+</html>

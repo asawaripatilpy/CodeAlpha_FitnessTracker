@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Activity - Fitness Tracker</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>➕ Add Fitness Activity</h1>
+    <p class="form-info">
+    Record your daily workout, steps, and calories.
+</p>
+
+    <p class="subtitle">Enter your daily fitness information</p>
+
+    <form method="POST">
+
+        <label>Date</label>
+        <input type="date" name="date" required>
+
+
+        <label>Exercise Type</label>
+
+        <select name="exercise_type" required>
+            <option value="">Select Exercise</option>
+            <option value="Walking">Walking</option>
+            <option value="Running">Running</option>
+            <option value="Cycling">Cycling</option>
+            <option value="Gym">Gym</option>
+            <option value="Yoga">Yoga</option>
+            <option value="Other">Other</option>
+        </select>
+
+
+        <label>Workout Time (minutes)</label>
+
+        <input type="number"
+               name="workout_minutes"
+               min="0"
+               placeholder="Example: 30"
+               required>
+
+
+        <label>Steps</label>
+
+        <input type="number"
+               name="steps"
+               min="0"
+               placeholder="Example: 5000"
+               required>
+
+
+        <label>Calories Burned</label>
+
+        <input type="number"
+               name="calories"
+               min="0"
+               placeholder="Example: 300"
+               required>
+
+
+        <button type="submit">
+            💾 Save Activity
+        </button>
+        {% if prediction %}
+        <div class="prediction">
+        <h2>🧠 Your Activity Level</h2>
+        <p>{{ prediction }}</p>
+        </div>
+        {% endif %}
+
+    </form>
+
+    <br>
+
+    <a href="/" class="button">
+        ← Back to Dashboard
+    </a>
+
+</div>
+
+</body>
+</html>
